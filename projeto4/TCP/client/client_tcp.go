@@ -1,12 +1,12 @@
 package main
 
 import (
-	"math/rand"
-	"fmt"
-	"net"
 	"encoding/json"
+	"flag"
+	"fmt"
+	"math/rand"
+	"net"
 	"os"
-	"sync"
 	"time"
 	//"strconv"
 )
@@ -16,7 +16,7 @@ type NumbersResponse struct {
 	NonPrimeNumbers []int `json:"non_prime_numbers"`
 }
 
-const sendingNumber int = 10
+const NUM_REPS = 10000
 
 func errorFound(err error) {
 	if err != nil {
@@ -38,64 +38,78 @@ func generateRandomNumbers(count int, baseSeed int64, interval int) []int {
 	return numbers
 }
 
-func serverConnection(conn net.Conn, numbersJSON []byte, wg *sync.WaitGroup, mu *sync.Mutex) {
-	
+// , wg *sync.WaitGroup, mu *sync.Mutex
+func serverConnection(conn net.Conn, numbersJSON []byte, clientID int, numClients int) {
+
 	defer conn.Close()
-	defer wg.Done()
 
 	var response NumbersResponse
-	//var PrimeNumbers    []int
-	//var NonPrimeNumbers []int
-	
-	// Enviar requisição para o servidor
-	mu.Lock()
-	_, err := conn.Write(numbersJSON)
-	errorFound(err)
 
-	// Aguardar resposta do servidor
-	buffer := make([]byte, 1024)
-	n, err := conn.Read(buffer)
-	errorFound(err)
-	mu.Unlock()
+	// Abrir arquivo para escrita
+	fileName := fmt.Sprintf("TCP_elapsed_time_client_%d_%d.txt", numClients, clientID)
+	file, err := os.Create(fileName)
+	if err != nil {
+		fmt.Println("Erro ao criar arquivo:", err)
+		return
+	}
 
-	// Deserializar a resposta do servidor para a estrutura de resposta
-	err = json.Unmarshal(buffer[:n], &response)
-	errorFound(err)
+	for i := 0; i < NUM_REPS; i++ {
+		// Iniciar contagem antes do envio
+		startTime := time.Now().UnixNano()
 
-	mu.Lock()
-	// Exibir lista de números primos
-	fmt.Println("Números Primos:", response.PrimeNumbers)
+		// Enviar requisição para o servidor
+		_, err := conn.Write(numbersJSON)
+		errorFound(err)
 
-	// Exibir lista de números não primos
-	fmt.Println("Números Não Primos:", response.NonPrimeNumbers)
-	mu.Unlock()
+		// Aguardar resposta do servidor
+		buffer := make([]byte, 4096)
+		n, err := conn.Read(buffer)
+
+		// registrar tempo decorrido
+		elapsedTime := time.Now().UnixNano() - startTime
+
+		errorFound(err)
+
+		// Escrever elapsedTime no arquivo
+		_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
+		if err != nil {
+			fmt.Println("Erro ao escrever no arquivo:", err)
+			return
+		}
+
+		// Deserializar a resposta do servidor para a estrutura de resposta
+		err = json.Unmarshal(buffer[:n], &response)
+		errorFound(err)
+
+		// Exibir lista de números primos
+		fmt.Println("Números Primos:", response.PrimeNumbers)
+
+		// Exibir lista de números não primos
+		fmt.Println("Números Não Primos:", response.NonPrimeNumbers)
+
+	}
 }
 
 func main() {
 
+	// Argumentos de linha de comando
+	numClients := flag.Int("clients", 1, "Number of clients")
+	clientID := flag.Int("id", 0, "Client ID")
+	flag.Parse()
+
 	// Gerar lista de números aleatórios
-	numbers := generateRandomNumbers(50, 81, 1000)
-	wg := sync.WaitGroup{}
-	mu := new(sync.Mutex)
-	
+	numbers := generateRandomNumbers(800, 81, 1500)
 
 	// Serializar a estrutura de requisição para JSON
 	numbersJSON, err := json.Marshal(numbers)
 	errorFound(err)
 
-	startTime := time.Now().UnixNano()
-	for i := 0; i < sendingNumber; i++{
-		
-		// Conectar ao servidor
-		conn, err := net.Dial("tcp", "localhost:8080")
-		errorFound(err)
-		wg.Add(1)
+	// Conectar ao servidor
+	conn, err := net.Dial("tcp", "localhost:8080")
+	errorFound(err)
 
-		go serverConnection(conn, numbersJSON, &wg, mu)
-	}
+	serverConnection(conn, numbersJSON, *clientID, *numClients)
 
-	wg.Wait()
-	elapsedTime := time.Now().UnixNano() - startTime
-	fmt.Printf("%d\n", elapsedTime)
+	println("TERMINOU")
 
 }

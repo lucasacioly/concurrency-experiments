@@ -13,6 +13,8 @@ type NumbersResponse struct {
 	NonPrimeNumbers []int `json:"non_prime_numbers"`
 }
 
+const NUM_REPS = 10000
+
 func errorFound(err error) {
 	if err != nil {
 		fmt.Println("Fatal error: ", err)
@@ -49,7 +51,6 @@ func separatePrimeNumbers(numbers []int) ([]int, []int) {
 	return primeNumbers, nonPrimeNumbers
 }
 
-
 func main() {
 	ln, err := net.Listen("tcp", ":8080")
 	errorFound(err)
@@ -68,31 +69,33 @@ func main() {
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
 
-	// Receber requisição do cliente
-	buffer := make([]byte, 1024)
-	n, err := conn.Read(buffer)
-	errorFound(err)
+	for i := 0; i < NUM_REPS; i++ {
+		// Receber requisição do cliente
+		buffer := make([]byte, 4096)
+		n, err := conn.Read(buffer)
+		errorFound(err)
 
-	
-	// Deserializar a requisição do cliente para a estrutura de requisição
-	var request []int
-	err = json.Unmarshal(buffer[:n], &request)
-	errorFound(err)
+		// Deserializar a requisição do cliente para a estrutura de requisição
+		var request []int
+		err = json.Unmarshal(buffer[:n], &request)
+		errorFound(err)
 
-	// Separar números primos e não primos
-	primeNumbers, nonPrimeNumbers := separatePrimeNumbers(request)
+		// Separar números primos e não primos
+		primeNumbers, nonPrimeNumbers := separatePrimeNumbers(request)
 
-	// Montar a estrutura de resposta
-	response := NumbersResponse{
-		PrimeNumbers:    primeNumbers,
-		NonPrimeNumbers: nonPrimeNumbers,
+		// Montar a estrutura de resposta
+		response := NumbersResponse{
+			PrimeNumbers:    primeNumbers,
+			NonPrimeNumbers: nonPrimeNumbers,
+		}
+
+		// Serializar a estrutura de resposta para JSON
+		responseJSON, err := json.Marshal(response)
+		errorFound(err)
+
+		// Enviar resposta para o cliente
+		_, err = conn.Write(responseJSON)
+		errorFound(err)
 	}
 
-	// Serializar a estrutura de resposta para JSON
-	responseJSON, err := json.Marshal(response)
-	errorFound(err)
-
-	// Enviar resposta para o cliente
-	_, err = conn.Write(responseJSON)
-	errorFound(err)
 }
