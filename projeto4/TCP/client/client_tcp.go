@@ -8,7 +8,7 @@ import (
 	"net"
 	"os"
 	"time"
-	//"strconv"
+	"sync"
 )
 
 type NumbersResponse struct {
@@ -39,19 +39,24 @@ func generateRandomNumbers(count int, baseSeed int64, interval int) []int {
 }
 
 // , wg *sync.WaitGroup, mu *sync.Mutex
-func serverConnection(conn net.Conn, numbersJSON []byte, clientID int, numClients int) {
+func serverConnection(conn net.Conn, numbersJSON []byte, clientID int, numClients int, wg *sync.WaitGroup) {
 
 	defer conn.Close()
+	defer wg.Done()
 
 	var response NumbersResponse
+	var checker int64 = 0
 
-	// Abrir arquivo para escrita
+	// Abrir arquivos para escrita
 	fileName := fmt.Sprintf("TCP_elapsed_time_client_%d_%d.txt", numClients, clientID)
 	file, err := os.Create(fileName)
-	if err != nil {
-		fmt.Println("Erro ao criar arquivo:", err)
-		return
-	}
+	errorFound(err)
+
+	fileName2 := fmt.Sprintf("TCP_total-medium_time_client_%d_%d.txt", numClients, clientID)
+	file2, err := os.Create(fileName2)
+	errorFound(err)
+
+	startTimeAll := time.Now().UnixNano()
 
 	for i := 0; i < NUM_REPS; i++ {
 		// Iniciar contagem antes do envio
@@ -64,33 +69,50 @@ func serverConnection(conn net.Conn, numbersJSON []byte, clientID int, numClient
 		// Aguardar resposta do servidor
 		buffer := make([]byte, 4096)
 		n, err := conn.Read(buffer)
-
-		// registrar tempo decorrido
-		elapsedTime := time.Now().UnixNano() - startTime
-
 		errorFound(err)
-
-		// Escrever elapsedTime no arquivo
-		_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
-		if err != nil {
-			fmt.Println("Erro ao escrever no arquivo:", err)
-			return
-		}
 
 		// Deserializar a resposta do servidor para a estrutura de resposta
 		err = json.Unmarshal(buffer[:n], &response)
 		errorFound(err)
 
+		/*
 		// Exibir lista de números primos
 		fmt.Println("Números Primos:", response.PrimeNumbers)
 
 		// Exibir lista de números não primos
 		fmt.Println("Números Não Primos:", response.NonPrimeNumbers)
+		*/
+
+		// registrar tempo decorrido
+		elapsedTime := time.Now().UnixNano() - startTime
+		if elapsedTime != 0{
+			_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
+			errorFound(err)
+			checker++
+		}
 
 	}
+
+	elapsedTimeAll := time.Now().UnixNano() - startTimeAll
+	elapsedTimeMedium := elapsedTimeAll/checker
+
+	// Escrever elapsedTime no arquivo geral
+	_, err = file2.WriteString(fmt.Sprintf("Tempo de duração geral: %d\nTempo de duração médio de cada envio: %d", elapsedTimeAll, elapsedTimeMedium))
+	errorFound(err)
+
+	// Exibir lista de números primos
+	fmt.Println("Números Primos:", response.PrimeNumbers)
+
+	// Exibir lista de números não primos
+	fmt.Println("Números Não Primos:", response.NonPrimeNumbers)
+
+
 }
 
 func main() {
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
 
 	// Argumentos de linha de comando
 	numClients := flag.Int("clients", 1, "Number of clients")
@@ -108,8 +130,8 @@ func main() {
 	conn, err := net.Dial("tcp", "localhost:8080")
 	errorFound(err)
 
-	serverConnection(conn, numbersJSON, *clientID, *numClients)
+	serverConnection(conn, numbersJSON, *clientID, *numClients, &wg)
 
-	println("TERMINOU")
+	wg.Wait()
 
 }

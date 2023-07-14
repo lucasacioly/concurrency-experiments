@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"net"
 	"os"
-	//"strconv"
+	//"flag"
 )
 
 type NumbersResponse struct {
 	PrimeNumbers    []int `json:"prime_numbers"`
 	NonPrimeNumbers []int `json:"non_prime_numbers"`
 }
+
+const NUM_REPS = 10000
 
 func errorFound(err error) {
 	if err != nil {
@@ -49,44 +51,59 @@ func separatePrimeNumbers(numbers []int) ([]int, []int) {
 	return primeNumbers, nonPrimeNumbers
 }
 
-
 func main() {
+
+	/*
+	// Argumentos de linha de comando
+	numClients := flag.Int("clients", 1, "Number of clients")
+	flag.Parse()
+	*/
+
 	ln, err := net.ListenUDP("udp", &net.UDPAddr{IP: net.IPv4zero, Port: 8080})
 	errorFound(err)
 	defer ln.Close()
 
 	fmt.Println("Aguardando conexões UDP...")
 
-	for {
-		buffer := make([]byte, 1024)
+	for i:=0; i < 1; i++ {
+		go handleConnection(ln)
+	}
+
+	/* Tem que ver como pega esse num clients do powershell pra usar aqui
+	for i:=0; i < int(numClients); i++ {
+		go handleConnection(ln)
+	} */
+}
+
+func handleConnection(ln *net.UDPConn) {
+
+	for i := 0; i < NUM_REPS; i++ {
+		// Receber requisição do cliente
+		buffer := make([]byte, 4096)
 		n, addr, err := ln.ReadFromUDP(buffer)
 		errorFound(err)
 
-		go handleConnection(ln, addr, buffer[:n])
+		// Deserializar a requisição do cliente para a estrutura de requisição
+		var request []int
+		err = json.Unmarshal(buffer[:n], &request)
+		errorFound(err)
+
+		// Separar números primos e não primos
+		primeNumbers, nonPrimeNumbers := separatePrimeNumbers(request)
+
+		// Montar a estrutura de resposta
+		response := NumbersResponse{
+			PrimeNumbers:    primeNumbers,
+			NonPrimeNumbers: nonPrimeNumbers,
+		}
+
+		// Serializar a estrutura de resposta para JSON
+		responseJSON, err := json.Marshal(response)
+		errorFound(err)
+
+		// Enviar resposta para o cliente
+		_, err = ln.WriteToUDP(responseJSON, addr)
+		errorFound(err)
 	}
-}
 
-func handleConnection(ln *net.UDPConn, addr *net.UDPAddr, buffer []byte) {
-
-	// Deserializar a requisição do cliente para a estrutura de requisição
-	var request []int
-	err := json.Unmarshal(buffer, &request)
-	errorFound(err)
-
-	// Separar números primos e não primos
-	primeNumbers, nonPrimeNumbers := separatePrimeNumbers(request)
-
-	// Montar a estrutura de resposta
-	response := NumbersResponse{
-		PrimeNumbers:    primeNumbers,
-		NonPrimeNumbers: nonPrimeNumbers,
-	}
-
-	// Serializar a estrutura de resposta para JSON
-	responseJSON, err := json.Marshal(response)
-	errorFound(err)
-
-	// Enviar resposta para o cliente
-	_, err = ln.WriteToUDP(responseJSON, addr)
-	errorFound(err)
 }
