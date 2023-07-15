@@ -8,7 +8,6 @@ import (
 	"net"
 	"os"
 	"time"
-	//"strconv"
 )
 
 type NumbersResponse struct {
@@ -47,10 +46,7 @@ func serverConnection(conn net.Conn, numbersJSON []byte, clientID int, numClient
 	// Abrir arquivo para escrita
 	fileName := fmt.Sprintf("TCP_elapsed_time_client_%d_%d.txt", numClients, clientID)
 	file, err := os.Create(fileName)
-	if err != nil {
-		fmt.Println("Erro ao criar arquivo:", err)
-		return
-	}
+	errorFound(err)
 
 	for i := 0; i < NUM_REPS; i++ {
 		//time.Sleep(time.Millisecond)
@@ -67,14 +63,9 @@ func serverConnection(conn net.Conn, numbersJSON []byte, clientID int, numClient
 
 		// registrar tempo decorrido
 		elapsedTime := time.Now().UnixNano() - startTime
-
-		errorFound(err)
-
-		// Escrever elapsedTime no arquivo
-		_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
-		if err != nil {
-			fmt.Println("Erro ao escrever no arquivo:", err)
-			return
+		if elapsedTime != 0{
+			_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
+			errorFound(err)
 		}
 
 		// Deserializar a resposta do servidor para a estrutura de resposta

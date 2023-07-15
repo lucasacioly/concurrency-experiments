@@ -8,7 +8,6 @@ import (
 	"net"
 	"os"
 	"time"
-	"sync"
 )
 
 type NumbersResponse struct {
@@ -38,26 +37,17 @@ func generateRandomNumbers(count int, baseSeed int64, interval int) []int {
 	return numbers
 }
 
-// , wg *sync.WaitGroup, mu *sync.Mutex
-func serverConnection(addr *net.UDPAddr, conn *net.UDPConn, numbersJSON []byte, clientID int, numClients int, wg *sync.WaitGroup) {
-
-	defer wg.Done()
+func serverConnection(addr *net.UDPAddr, conn *net.UDPConn, numbersJSON []byte, clientID int, numClients int) {
 
 	var response NumbersResponse
-	var checker int64 = 0
 
 	// Abrir arquivos para escrita
 	fileName := fmt.Sprintf("UDP_elapsed_time_client_%d_%d.txt", numClients, clientID)
 	file, err := os.Create(fileName)
 	errorFound(err)
 
-	fileName2 := fmt.Sprintf("UDP_total-medium_time_client_%d_%d.txt", numClients, clientID)
-	file2, err := os.Create(fileName2)
-	errorFound(err)
-
-	startTimeAll := time.Now().UnixNano()
-
 	for i := 0; i < NUM_REPS; i++ {
+		time.Sleep(time.Millisecond)
 		// Iniciar contagem antes do envio
 		startTime := time.Now().UnixNano()
 
@@ -66,52 +56,32 @@ func serverConnection(addr *net.UDPAddr, conn *net.UDPConn, numbersJSON []byte, 
 		errorFound(err)
 
 		// Aguardar resposta do servidor
-		buffer := make([]byte, 1024)
+		buffer := make([]byte, 8192)
 		n, _, err := conn.ReadFromUDP(buffer)
 		errorFound(err)
-
-		// Deserializar a resposta do servidor para a estrutura de resposta
-		err = json.Unmarshal(buffer[:n], &response)
-		errorFound(err)
-
-		/*
-		// Exibir lista de números primos
-		fmt.Println("Números Primos:", response.PrimeNumbers)
-
-		// Exibir lista de números não primos
-		fmt.Println("Números Não Primos:", response.NonPrimeNumbers)
-		*/
 
 		// registrar tempo decorrido
 		elapsedTime := time.Now().UnixNano() - startTime
 		if elapsedTime != 0{
 			_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
 			errorFound(err)
-			checker++
 		}
 
+		// Deserializar a resposta do servidor para a estrutura de resposta
+		err = json.Unmarshal(buffer[:n], &response)
+		errorFound(err)
+
+		
+		// Exibir lista de números primos
+		fmt.Println("Números Primos:", response.PrimeNumbers)
+
+		// Exibir lista de números não primos
+		fmt.Println("Números Não Primos:", response.NonPrimeNumbers)
+
 	}
-
-	elapsedTimeAll := time.Now().UnixNano() - startTimeAll
-	elapsedTimeMedium := elapsedTimeAll/checker
-
-	// Escrever elapsedTime no arquivo geral
-	_, err = file2.WriteString(fmt.Sprintf("Tempo de duração geral: %d\nTempo de duração médio de cada envio: %d", elapsedTimeAll, elapsedTimeMedium))
-	errorFound(err)
-
-	// Exibir lista de números primos
-	fmt.Println("Números Primos:", response.PrimeNumbers)
-
-	// Exibir lista de números não primos
-	fmt.Println("Números Não Primos:", response.NonPrimeNumbers)
-
-
 }
 
 func main() {
-
-	wg := sync.WaitGroup{}
-	wg.Add(1)
 
 	// Argumentos de linha de comando
 	numClients := flag.Int("clients", 1, "Number of clients")
@@ -133,8 +103,8 @@ func main() {
 	conn, err := net.ListenUDP("udp", nil)
 	errorFound(err)
 
-	serverConnection(serverAddr, conn, numbersJSON, *clientID, *numClients, &wg)
+	serverConnection(serverAddr, conn, numbersJSON, *clientID, *numClients)
 
-	wg.Wait()
+	println("TERMINOU")
 
 }
