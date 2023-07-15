@@ -2,7 +2,7 @@ $goPath = "C:\Program Files\Go\bin\go.exe"  # Caminho para o executável 'go.exe
 $serverPath = Join-Path $PSScriptRoot "TCP\server\server_tcp.go"  # Caminho completo para o arquivo 'server_tcp.go'
 $clientPath = Join-Path $PSScriptRoot "TCP\client\client_tcp.go"  # Caminho completo para o arquivo 'client_tcp.go'
 
-$numberOfClients = 1 # Quantidade de clientes a serem iniciados
+$numberOfClients = 80 # Quantidade de clientes a serem iniciados
 
 # Verifica se o executável 'go.exe' existe no caminho especificado
 if (Test-Path $goPath) {

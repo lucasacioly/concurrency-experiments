@@ -71,7 +71,7 @@ func handleConnection(conn net.Conn) {
 
 	for i := 0; i < NUM_REPS; i++ {
 		// Receber requisição do cliente
-		buffer := make([]byte, 4096)
+		buffer := make([]byte, 8192)
 		n, err := conn.Read(buffer)
 		errorFound(err)
 
@@ -96,6 +96,8 @@ func handleConnection(conn net.Conn) {
 		// Enviar resposta para o cliente
 		_, err = conn.Write(responseJSON)
 		errorFound(err)
+
+		println("enviou ", i)
 	}
 
 }
