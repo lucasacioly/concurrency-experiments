@@ -63,10 +63,10 @@ func serverConnection(conn net.Conn, numbersJSON []byte, clientID int, numClient
 
 		// registrar tempo decorrido
 		elapsedTime := time.Now().UnixNano() - startTime
-		if elapsedTime != 0{
-			_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
-			errorFound(err)
-		}
+		
+		_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
+		errorFound(err)
+		
 
 		// Deserializar a resposta do servidor para a estrutura de resposta
 		err = json.Unmarshal(buffer[:n], &response)
