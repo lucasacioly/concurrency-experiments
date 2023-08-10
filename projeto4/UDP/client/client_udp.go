@@ -73,15 +73,9 @@ func serverConnection(addr *net.UDPAddr, conn *net.UDPConn, clientID int, numCli
 
 		// registrar tempo decorrido
 		elapsedTime := time.Now().UnixNano() - startTime
+
 		_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
 		errorFound(err)
-
-		//println("recebeu ", i)
-		/*
-			if elapsedTime != 0 {
-				_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
-				errorFound(err)
-			}*/
 
 		// Deserializar a resposta do servidor para a estrutura de resposta
 		err = json.Unmarshal(buffer[:n], &response)
