@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net"
 	"os"
@@ -15,6 +16,7 @@ type NumbersResponse struct {
 }
 
 const NUM_REPS = 10000
+const NUM_REPS_DEMO = 5
 
 func errorFound(err error) {
 	if err != nil {
@@ -53,11 +55,10 @@ func separatePrimeNumbers(numbers []int) ([]int, []int) {
 }
 
 func main() {
-	/*
+
 	// Argumentos de linha de comando
 	numClients := flag.Int("clients", 1, "Number of clients")
 	flag.Parse()
-	*/
 
 	wg := sync.WaitGroup{}
 
@@ -65,17 +66,12 @@ func main() {
 	errorFound(err)
 	defer ln.Close()
 
-	fmt.Println("Aguardando conexões UDP...")
+	fmt.Println("Aguardando pacotes UDP...")
 
-	for i:=0; i < 1; i++ {
+	for i := 0; i < *numClients; i++ {
 		wg.Add(1)
 		go handleConnection(ln, &wg)
 	}
-
-	/* Tem que ver como pega esse num clients do powershell pra usar aqui
-	for i:=0; i < int(numClients); i++ {
-		go handleConnection(ln)
-	} */
 
 	wg.Wait()
 }
@@ -85,7 +81,7 @@ func handleConnection(ln *net.UDPConn, wg *sync.WaitGroup) {
 
 	for i := 0; i < NUM_REPS; i++ {
 		// Receber requisição do cliente
-		buffer := make([]byte, 8092)
+		buffer := make([]byte, 16384)
 		n, addr, err := ln.ReadFromUDP(buffer)
 		errorFound(err)
 

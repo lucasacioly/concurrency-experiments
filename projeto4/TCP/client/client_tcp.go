@@ -16,6 +16,10 @@ type NumbersResponse struct {
 }
 
 const NUM_REPS = 10000
+const TAM_AMOSTRA = 3000
+
+const NUM_REPS_DEMO = 5
+const TAM_AMOSTRA_DEMO = 100
 
 func errorFound(err error) {
 	if err != nil {
@@ -37,9 +41,16 @@ func generateRandomNumbers(count int, baseSeed int64, interval int) []int {
 	return numbers
 }
 
-func serverConnection(conn net.Conn, numbersJSON []byte, clientID int, numClients int) {
+func serverConnection(conn net.Conn, clientID int, numClients int) {
 
 	defer conn.Close()
+
+	// Gerar lista de números aleatórios
+	numbers := generateRandomNumbers(TAM_AMOSTRA, 81, TAM_AMOSTRA/2)
+
+	// Serializar a estrutura de requisição para JSON
+	numbersJSON, err := json.Marshal(numbers)
+	errorFound(err)
 
 	var response NumbersResponse
 
@@ -58,15 +69,17 @@ func serverConnection(conn net.Conn, numbersJSON []byte, clientID int, numClient
 		errorFound(err)
 
 		// Aguardar resposta do servidor
-		buffer := make([]byte, 8192)
+		buffer := make([]byte, 16384)
 		n, err := conn.Read(buffer)
 
 		// registrar tempo decorrido
 		elapsedTime := time.Now().UnixNano() - startTime
-		if elapsedTime != 0{
-			_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
-			errorFound(err)
-		}
+		_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
+		errorFound(err)
+		/*
+			if elapsedTime != 0 {
+
+			}*/
 
 		// Deserializar a resposta do servidor para a estrutura de resposta
 		err = json.Unmarshal(buffer[:n], &response)
@@ -87,19 +100,13 @@ func main() {
 	numClients := flag.Int("clients", 1, "Number of clients")
 	clientID := flag.Int("id", 0, "Client ID")
 	flag.Parse()
-
-	// Gerar lista de números aleatórios
-	numbers := generateRandomNumbers(1500, 81, 3000)
-
-	// Serializar a estrutura de requisição para JSON
-	numbersJSON, err := json.Marshal(numbers)
-	errorFound(err)
+	println(*numClients, *clientID)
 
 	// Conectar ao servidor
 	conn, err := net.Dial("tcp", "localhost:8080")
 	errorFound(err)
 
-	serverConnection(conn, numbersJSON, *clientID, *numClients)
+	serverConnection(conn, *clientID, *numClients)
 
 	println("TERMINOU")
 

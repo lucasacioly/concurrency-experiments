@@ -13,6 +13,7 @@ type NumbersResponse struct {
 }
 
 const NUM_REPS = 10000
+const NUM_REPS_DEMO = 5
 
 func errorFound(err error) {
 	if err != nil {
@@ -70,7 +71,7 @@ func handleConnection(conn net.Conn) {
 
 	for i := 0; i < NUM_REPS; i++ {
 		// Receber requisição do cliente
-		buffer := make([]byte, 8192)
+		buffer := make([]byte, 16384)
 		n, err := conn.Read(buffer)
 		errorFound(err)
 

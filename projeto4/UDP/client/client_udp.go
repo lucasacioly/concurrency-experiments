@@ -16,6 +16,10 @@ type NumbersResponse struct {
 }
 
 const NUM_REPS = 10000
+const TAM_AMOSTRA = 3000
+
+const NUM_REPS_DEMO = 5
+const TAM_AMOSTRA_DEMO = 100
 
 func errorFound(err error) {
 	if err != nil {
@@ -37,7 +41,14 @@ func generateRandomNumbers(count int, baseSeed int64, interval int) []int {
 	return numbers
 }
 
-func serverConnection(addr *net.UDPAddr, conn *net.UDPConn, numbersJSON []byte, clientID int, numClients int) {
+func serverConnection(addr *net.UDPAddr, conn *net.UDPConn, clientID int, numClients int) {
+
+	// Gerar lista de números aleatórios
+	numbers := generateRandomNumbers(TAM_AMOSTRA, 81, TAM_AMOSTRA/2)
+
+	// Serializar a estrutura de requisição para JSON
+	numbersJSON, err := json.Marshal(numbers)
+	errorFound(err)
 
 	var response NumbersResponse
 
@@ -47,7 +58,7 @@ func serverConnection(addr *net.UDPAddr, conn *net.UDPConn, numbersJSON []byte, 
 	errorFound(err)
 
 	for i := 0; i < NUM_REPS; i++ {
-		time.Sleep(time.Millisecond)
+		//time.Sleep(time.Millisecond)
 		// Iniciar contagem antes do envio
 		startTime := time.Now().UnixNano()
 
@@ -56,22 +67,26 @@ func serverConnection(addr *net.UDPAddr, conn *net.UDPConn, numbersJSON []byte, 
 		errorFound(err)
 
 		// Aguardar resposta do servidor
-		buffer := make([]byte, 8192)
+		buffer := make([]byte, 16384)
 		n, _, err := conn.ReadFromUDP(buffer)
 		errorFound(err)
 
 		// registrar tempo decorrido
 		elapsedTime := time.Now().UnixNano() - startTime
-		if elapsedTime != 0{
-			_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
-			errorFound(err)
-		}
+		_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
+		errorFound(err)
+
+		//println("recebeu ", i)
+		/*
+			if elapsedTime != 0 {
+				_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
+				errorFound(err)
+			}*/
 
 		// Deserializar a resposta do servidor para a estrutura de resposta
 		err = json.Unmarshal(buffer[:n], &response)
 		errorFound(err)
 
-		
 		// Exibir lista de números primos
 		fmt.Println("Números Primos:", response.PrimeNumbers)
 
@@ -88,13 +103,6 @@ func main() {
 	clientID := flag.Int("id", 0, "Client ID")
 	flag.Parse()
 
-	// Gerar lista de números aleatórios
-	numbers := generateRandomNumbers(800, 81, 1500)
-
-	// Serializar a estrutura de requisição para JSON
-	numbersJSON, err := json.Marshal(numbers)
-	errorFound(err)
-
 	// Resolver endereço do servidor
 	serverAddr, err := net.ResolveUDPAddr("udp", "localhost:8080")
 	errorFound(err)
@@ -103,7 +111,7 @@ func main() {
 	conn, err := net.ListenUDP("udp", nil)
 	errorFound(err)
 
-	serverConnection(serverAddr, conn, numbersJSON, *clientID, *numClients)
+	serverConnection(serverAddr, conn, *clientID, *numClients)
 
 	println("TERMINOU")
 
