@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+service PrimeService {
+    rpc SeparatePrimeNumbers (NumbersRequest) returns (NumbersResponse);
+}
+
+message NumbersRequest {
+    repeated int32 numbers = 1;
+}
+
+message NumbersResponse {
+    repeated int32 prime_numbers = 1;
+    repeated int32 non_prime_numbers = 2;
+}
