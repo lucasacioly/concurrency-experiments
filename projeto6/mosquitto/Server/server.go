@@ -5,30 +5,20 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 type NumbersRequest struct {
-	Numbers []int
+	ClientId int
+	Numbers  []int
 }
-
 type NumbersResponse struct {
 	PrimeNumbers    []int
 	NonPrimeNumbers []int
 }
 
-const NUM_REPS = 10
-
-type PrimeService NumbersResponse
-
-func (ps *PrimeService) GetPrimeNumbers(req *NumbersRequest, resp *NumbersResponse) (err error) {
-	primeNumbers, nonPrimeNumbers := separatePrimeNumbers(req.Numbers)
-	resp.PrimeNumbers = primeNumbers
-	resp.NonPrimeNumbers = nonPrimeNumbers
-	return nil
-}
+const qos = 1
 
 func onMessageReceived(client mqtt.Client, msg mqtt.Message) {
 	var request NumbersRequest
@@ -46,8 +36,8 @@ func onMessageReceived(client mqtt.Client, msg mqtt.Message) {
 		log.Printf("Error encoding response: %v", err)
 		return
 	}
-
-	responseTopic := strings.Replace(msg.Topic(), "request", "response", 1)
+	println(request.ClientId)
+	responseTopic := fmt.Sprintf("prime/response/%d", request.ClientId)
 	token := client.Publish(responseTopic, 0, false, responseBytes)
 	token.Wait()
 }
@@ -101,7 +91,7 @@ func main() {
 	defer client.Disconnect(250)
 
 	requestTopic := "prime/request"
-	token = client.Subscribe(requestTopic, 0, onMessageReceived)
+	token = client.Subscribe(requestTopic, qos, onMessageReceived)
 	token.Wait()
 	if token.Error() != nil {
 		fmt.Println(token.Error())
@@ -109,5 +99,5 @@ func main() {
 	}
 
 	fmt.Println("Aguardando conexões via MQTT...")
-	select {}
+	fmt.Scanln()
 }
