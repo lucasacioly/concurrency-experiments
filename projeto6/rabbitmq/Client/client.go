@@ -81,34 +81,6 @@ func serverConnectionDemo(client *rpc.Client) {
 	}
 }
 
-/*
-func serverConnection(client *rpc.Client, clientID int, numClients int) {
-
-	// generate random numbers
-	numbers := generateRandomNumbers(TAM_AMOSTRA, 81, TAM_AMOSTRA/2)
-
-	// Open file for writing
-	fileName := fmt.Sprintf("RPC_elapsed_time_client_%d_%d.txt", numClients, clientID)
-	file, err := os.Create(fileName)
-	errorFound(err)
-
-	for i := 0; i < NUM_REPS; i++ {
-		startTime := time.Now().UnixNano()
-
-		// Call the RPC method on the server
-		var resp NumbersResponse
-		err := client.Call("PrimeService.GetPrimeNumbers", NumbersRequest{Numbers: numbers}, &resp)
-		errorFound(err)
-
-		elapsedTime := time.Now().UnixNano() - startTime
-		_, err = file.WriteString(fmt.Sprintf("%d\n", elapsedTime))
-
-		// Display prime and non-prime numbers
-		fmt.Println(clientID, " Prime Numbers:", resp.PrimeNumbers)
-		fmt.Println(clientID, " Non-Prime Numbers:", resp.NonPrimeNumbers)
-	}
-}*/
-
 func serverConnection(conn *amqp.Connection, ch *amqp.Channel, clientID int, numClients int) {
 
 	// generate random numbers

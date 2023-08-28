@@ -98,6 +98,8 @@ func serverConnection(client mqtt.Client, token mqtt.Token, clientID int, numCli
 			os.Exit(1)
 		}
 
+		time.Sleep(100 * time.Millisecond)
+
 	}
 }
 
