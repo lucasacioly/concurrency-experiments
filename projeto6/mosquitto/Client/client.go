@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"net/rpc"
 	"os"
 	"time"
 
@@ -25,9 +24,11 @@ type NumbersResponse struct {
 
 const NUM_REPS = 10000
 const TAM_AMOSTRA = 3000
+const RANGE = 1500
 
 const NUM_REPS_DEMO = 5
 const TAM_AMOSTRA_DEMO = 20
+const RANGE_DEMO = 50
 
 const qos = 1
 
@@ -50,27 +51,37 @@ func generateRandomNumbers(count int, baseSeed int64, interval int) []int {
 	return numbers
 }
 
-func serverConnectionDemo(client *rpc.Client) {
-
+func serverConnectionDemo(client mqtt.Client, token mqtt.Token, clientID int, numClients int) {
 	// generate random numbers
-	numbers := generateRandomNumbers(TAM_AMOSTRA_DEMO, 81, 50)
+	numbers := generateRandomNumbers(TAM_AMOSTRA_DEMO, 81, RANGE_DEMO)
 
 	for i := 0; i < NUM_REPS_DEMO; i++ {
-		// Call the RPC method on the server
-		var resp NumbersResponse
-		err := client.Call("PrimeService.GetPrimeNumbers", NumbersRequest{Numbers: numbers}, &resp)
-		errorFound(err)
+		request := NumbersRequest{Numbers: numbers}
+		request.ClientId = clientID
+		requestBytes, err := json.Marshal(request)
+		if err != nil {
+			log.Printf("Error encoding request: %v", err)
+			continue
+		}
 
-		// Display prime and non-prime numbers
-		fmt.Println("Prime Numbers:", resp.PrimeNumbers)
-		fmt.Println("Non-Prime Numbers:", resp.NonPrimeNumbers)
+		token := client.Publish("prime/request", qos, false, requestBytes)
+		token.Wait()
+
+		if token.Error() != nil {
+			fmt.Println(token.Error())
+			fmt.Println("ABORTAR OPERAÇÃO")
+			os.Exit(1)
+		}
+
+		time.Sleep(100 * time.Millisecond)
+
 	}
 }
 
 func serverConnection(client mqtt.Client, token mqtt.Token, clientID int, numClients int) {
 
 	// generate random numbers
-	numbers := generateRandomNumbers(TAM_AMOSTRA, 81, TAM_AMOSTRA/2)
+	numbers := generateRandomNumbers(TAM_AMOSTRA, 81, RANGE)
 
 	// Open file for writing start times
 	fileName := fmt.Sprintf("MQTT_start_time_client_%d_%d.txt", numClients, clientID)
@@ -137,8 +148,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	serverConnection(client, token, *clientID, *numClients)
-	//serverConnectionDemo(client, numbers)
+	//serverConnection(client, token, *clientID, *numClients)
+	serverConnectionDemo(client, token, *clientID, *numClients)
 
 	fmt.Scanln()
 }

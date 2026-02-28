@@ -6,13 +6,35 @@ import (
 	"time"
 )
 
+/*
+
+O Jantar dos Selvagens
+
+Uma variação curiosa do problema dos produtores/consumidores foi proposta
+em [Andrews, 1991] com o nome de Jantar dos Selvagens: uma tribo de selvagens está
+jantando ao redor de um grande caldeirão contendo N porções de missionário cozido.
+Quando um selvagem quer comer, ele se serve de uma porção no caldeirão, a menos
+que este esteja vazio. Nesse caso, o selvagem primeiro acorda o cozinheiro da tribo e
+espera que ele encha o caldeirão de volta, para então se servir novamente. Após encher
+o caldeirão, o cozinheiro volta a dormir.
+
+Restrições de sincronização:
+
+Selvagens não podem se servir ao mesmo tempo (mas podem comer ao mesmo
+tempo);
+
+• Selvagens não podem se servir se o caldeirão estiver vazio;
+• O cozinheiro só pode encher o caldeirão quando ele estiver vazio.
+
+
+*/
+
 const (
 	numPessoas int = 5
-	addPorçoes int = 10 //numero de porsoes para adicionar
+	addPorçoes int = 10 //numero de porções para adicionar
 )
 
 var (
-	// wgpessoas  sync.WaitGroup
 	wg         sync.WaitGroup
 	mutex      sync.Mutex
 	caldeirao  int = 0 // caldeirao
@@ -38,7 +60,7 @@ func pessoa(id int) {
 			<-avisaCheio
 		}
 		caldeirao -= 1
-		fmt.Println("Pessoa ", id, " encheu o prato")
+		fmt.Println("Pessoa ", id, " encheu o prato. Restam  ", caldeirao, "  porções")
 		mutex.Unlock()
 
 		comer(id)
@@ -46,8 +68,7 @@ func pessoa(id int) {
 }
 
 func comer(id int) {
-	time.Sleep(100 * time.Millisecond)
-	//fmt.Println("Pessoa ", id, " comeu")
+	time.Sleep(3000 * time.Millisecond)
 }
 
 func main() {
