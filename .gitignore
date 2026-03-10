@@ -21,9 +21,10 @@
 go.work
 
 # Arquivos de texto
-*.txt
-**/*.txt
 *.pdf
 **/*.pdf
 *.zip
 **/*.zip
+
+
+*.txt
