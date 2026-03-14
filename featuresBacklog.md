@@ -4,3 +4,4 @@ Feature: Uma possível funcionalidade para o projeto seria o uso de threads para
 Feature: Implementação de um sistema de filas com processamento assíncrono e balanceamento de carga.
 Feature: Um sistema de controle de tarefas concorrentes com monitoramento em tempo real.
 Feature: Implementar threads para simular processos concorrentes.
+Feature: Adicionar suporte para execução de tarefas assíncronas com controle de concorrência.
