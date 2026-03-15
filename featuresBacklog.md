@@ -6,3 +6,4 @@ Feature: Um sistema de controle de tarefas concorrentes com monitoramento em tem
 Feature: Implementar threads para simular processos concorrentes.
 Feature: Adicionar suporte para execução de tarefas assíncronas com controle de concorrência.
 Feature: Um sistema de processamento paralelo com threads e semáforos.
+Feature: Implementação de um sistema de filas assíncronas para processamento paralelo.
