@@ -15,3 +15,4 @@ Feature: Implementação de um sistema de filas assíncronas para testes de conc
 Feature: Implementar um sistema de threads para processamento paralelo de dados.
 Feature: Implementar threads para processamento paralelo em tarefas computacionais.
 Feature: Implementação de um sistema de filas concorrentes para processamento paralelo.
+Feature: Implementar um sistema de threads para processamento paralelo.
