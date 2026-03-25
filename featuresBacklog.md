@@ -20,3 +20,4 @@ Feature: Implementação de um sistema de processamento paralelo com threads e l
 Feature: Adicionar um sistema de filas para processamento assíncrono de tarefas.
 Feature: Implementar um sistema de filas com processamento assíncrono.
 Feature: Implementar um sistema de filas para processamento assíncrono de tarefas.
+Feature: Adicionar suporte para processamento paralelo com threads e async/await.
