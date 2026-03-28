@@ -25,3 +25,4 @@ Feature: Implementar um sistema de processamento paralelo com threads.
 Feature: Um sistema de simulação de processos concorrentes com visualização em tempo real.
 Feature: Implementar um sistema de sincronização de threads para testes de concorrência.
 Feature: Adicionar suporte para processamento paralelo com threads.
+Feature: Adicionar suporte para execução de tarefas assíncronas em paralelo.
