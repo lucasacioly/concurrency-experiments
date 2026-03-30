@@ -29,3 +29,4 @@ Feature: Adicionar suporte para execução de tarefas assíncronas em paralelo.
 Feature: Implementar um sistema de processamento paralelo com threads e locks.
 Feature: Implementar um sistema de threads para simular processos concorrentes.
 Feature: Um sistema de gerenciamento de threads para experimentos de concorrência.
+Feature: Implementação de um sistema de filas para processamento assíncrono.
