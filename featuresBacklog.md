@@ -33,3 +33,4 @@ Feature: Implementação de um sistema de filas para processamento assíncrono.
 Feature: Adicionar suporte para execução paralela de tarefas com balanceamento de carga.
 Feature: Implementar um sistema de threads para simular processamento paralelo.
 Feature: Implementar um sistema de threads com sincronização via semáforos.
+Feature: Implementação de threads para processamento paralelo em tempo real.
