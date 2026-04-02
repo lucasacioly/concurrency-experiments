@@ -32,3 +32,4 @@ Feature: Um sistema de gerenciamento de threads para experimentos de concorrênc
 Feature: Implementação de um sistema de filas para processamento assíncrono.
 Feature: Adicionar suporte para execução paralela de tarefas com balanceamento de carga.
 Feature: Implementar um sistema de threads para simular processamento paralelo.
+Feature: Implementar um sistema de threads com sincronização via semáforos.
