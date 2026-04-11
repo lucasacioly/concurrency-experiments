@@ -38,4 +38,3 @@ Feature: Implementar um sistema de filas para processamento assíncrono de taref
 Feature: Implementar um sistema de filas para processamento paralelo de tarefas.
 Feature: Uma ideia é implementar um sistema de fila de tarefas com processamento paralelo.
 Feature: Implementar um sistema de processamento paralelo com threads.
-Feature: Uma possível adição ao projeto concurrency-experiments poderia ser um sistema de monitoramento de threads em tempo real.
