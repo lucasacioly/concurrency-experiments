@@ -37,4 +37,3 @@ Feature: Implementação de threads para processamento paralelo em tempo real.
 Feature: Implementar um sistema de filas para processamento assíncrono de tarefas.
 Feature: Implementar um sistema de filas para processamento paralelo de tarefas.
 Feature: Uma ideia é implementar um sistema de fila de tarefas com processamento paralelo.
-Feature: Implementar um sistema de processamento paralelo com threads.
