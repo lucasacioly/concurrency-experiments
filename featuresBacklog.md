@@ -36,3 +36,4 @@ Feature: Implementar um sistema de threads com sincronização via semáforos.
 Feature: Implementação de threads para processamento paralelo em tempo real.
 Feature: Implementar um sistema de filas para processamento assíncrono de tarefas.
 Feature: Implementar um sistema de filas para processamento paralelo de tarefas.
+Feature: Implementação de canal de comunicação entre goroutines usando pipelines de mensagens.
