@@ -38,3 +38,4 @@ Feature: Implementar um sistema de filas para processamento assíncrono de taref
 Feature: Implementar um sistema de filas para processamento paralelo de tarefas.
 Feature: Implementação de canal de comunicação entre goroutines usando pipelines de mensagens.
 Feature: Implementação de um benchmark comparando canais Go e atores Akka.
+Feature: Implementação de barramento de mensagens para testar deadlocks entre goroutines.
