@@ -42,3 +42,4 @@ Feature: Implementação de barramento de mensagens para testar deadlocks entre 
 Feature: Implementar um benchmark de desempenho comparando goroutines e threads nativas.
 Feature: Implementação de teste de corrida de threads com detecção de deadlocks.
 Feature: Implementação de barreiras de sincronização para testes de deadlock.
+Feature: Implementar visualizador de deadlocks em tempo real para analisar bloqueios concorrentes.
