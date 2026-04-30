@@ -44,3 +44,4 @@ Feature: Implementação de teste de corrida de threads com detecção de deadlo
 Feature: Implementação de barreiras de sincronização para testes de deadlock.
 Feature: Implementar visualizador de deadlocks em tempo real para analisar bloqueios concorrentes.
 Feature: Implementação de barramento de mensagens assíncronas para testar deadlocks e race conditions.
+Feature: Implementação de teste de deadlock usando múltiplas threads e mutexes.
