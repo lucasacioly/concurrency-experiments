@@ -46,3 +46,4 @@ Feature: Implementar visualizador de deadlocks em tempo real para analisar bloqu
 Feature: Implementação de barramento de mensagens assíncronas para testar deadlocks e race conditions.
 Feature: Implementação de teste de deadlock usando múltiplas threads e mutexes.
 Feature: Implementar teste de deadlock com múltiplas threads e monitoramento automático.
+Feature: Implementação de um benchmark de produtores-consumidores usando goroutines e canais.
