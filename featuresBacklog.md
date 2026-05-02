@@ -47,3 +47,4 @@ Feature: Implementação de barramento de mensagens assíncronas para testar dea
 Feature: Implementação de teste de deadlock usando múltiplas threads e mutexes.
 Feature: Implementar teste de deadlock com múltiplas threads e monitoramento automático.
 Feature: Implementação de um benchmark de produtores-consumidores usando goroutines e canais.
+Feature: Implementação de um benchmark comparando goroutines e atores em diferentes cargas.
