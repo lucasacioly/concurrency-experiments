@@ -49,3 +49,4 @@ Feature: Implementar teste de deadlock com múltiplas threads e monitoramento au
 Feature: Implementação de um benchmark de produtores-consumidores usando goroutines e canais.
 Feature: Implementação de um benchmark comparando goroutines e atores em diferentes cargas.
 Feature: Implementação de teste de desempenho para lock‑free queues em múltiplas threads.
+Feature: Implementação de teste de bloqueio de deadlock com monitoramento de tempo de resposta
