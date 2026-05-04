@@ -52,3 +52,4 @@ Feature: Implementação de teste de desempenho para lock‑free queues em múlt
 Feature: Implementação de teste de bloqueio de deadlock com monitoramento de tempo de resposta
 Feature: Implementação de um benchmark de bloqueios versus lock‑free em múltiplas threads.
 Feature: Implementação de um benchmark para comparar desempenho de goroutines vs threads nativas.
+Feature: Implementação de um benchmark de desempenho para diferentes modelos de lock.
