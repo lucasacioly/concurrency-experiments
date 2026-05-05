@@ -54,3 +54,4 @@ Feature: Implementação de um benchmark de bloqueios versus lock‑free em múl
 Feature: Implementação de um benchmark para comparar desempenho de goroutines vs threads nativas.
 Feature: Implementação de um benchmark de desempenho para diferentes modelos de lock.
 Feature: Implementação de um benchmark para comparar desempenho de diferentes estratégias de lock.
+Feature: Implementação de um benchmark comparativo entre diferentes modelos de locks e atomics.
