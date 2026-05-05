@@ -55,3 +55,4 @@ Feature: Implementação de um benchmark para comparar desempenho de goroutines 
 Feature: Implementação de um benchmark de desempenho para diferentes modelos de lock.
 Feature: Implementação de um benchmark para comparar desempenho de diferentes estratégias de lock.
 Feature: Implementação de um benchmark comparativo entre diferentes modelos de locks e atomics.
+Feature: Implementação de um benchmark comparando diferentes modelos de sincronização em Go.
