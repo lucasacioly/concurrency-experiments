@@ -58,3 +58,4 @@ Feature: Implementação de um benchmark comparativo entre diferentes modelos de
 Feature: Implementação de um benchmark comparando diferentes modelos de sincronização em Go.
 Feature: Implementação de monitoramento visual de threads em tempo real.
 Feature: Implementação de benchmark de lock-free queues com diferentes tamanhos de carga.
+Feature: Implementação de um benchmark comparando goroutines e threads nativas.
