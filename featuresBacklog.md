@@ -61,3 +61,4 @@ Feature: Implementação de benchmark de lock-free queues com diferentes tamanho
 Feature: Implementação de um benchmark comparando goroutines e threads nativas.
 Feature: Implementar visualização em tempo real de threads e processos sincronizados usando gráficos interativos.
 Feature: Implementar um benchmark comparando diferentes estratégias de lock em Go.
+Feature: Implementar um benchmark comparando diferentes estratégias de lock em Go.
