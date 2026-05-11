@@ -63,3 +63,4 @@ Feature: Implementar visualização em tempo real de threads e processos sincron
 Feature: Implementar um benchmark comparando diferentes estratégias de lock em Go.
 Feature: Implementar um benchmark comparando diferentes estratégias de lock em Go.
 Feature: Implementar visualização em tempo real de bloqueios e deadlocks entre goroutines.
+Feature: Implementação de teste de corrida de dados entre goroutines com detecção de deadlocks.
