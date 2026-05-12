@@ -65,3 +65,4 @@ Feature: Implementar um benchmark comparando diferentes estratégias de lock em 
 Feature: Implementar visualização em tempo real de bloqueios e deadlocks entre goroutines.
 Feature: Implementação de teste de corrida de dados entre goroutines com detecção de deadlocks.
 Feature: Implementação de barramento de mensagens para testar sincronização entre goroutines.
+Feature: Implementar um benchmark comparando locks, atomics e channels em diferentes cargas.
