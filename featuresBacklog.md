@@ -67,3 +67,4 @@ Feature: Implementação de teste de corrida de dados entre goroutines com detec
 Feature: Implementação de barramento de mensagens para testar sincronização entre goroutines.
 Feature: Implementar um benchmark comparando locks, atomics e channels em diferentes cargas.
 Feature: Implementação de um scheduler de tarefas com prioridade dinâmica e monitoramento em tempo real.
+Feature: Implementação de um benchmark de sincronização usando mutexes e canais.
