@@ -70,3 +70,4 @@ Feature: Implementação de um scheduler de tarefas com prioridade dinâmica e m
 Feature: Implementação de um benchmark de sincronização usando mutexes e canais.
 Feature: Implementação de um benchmark de lock‑free queues com métricas de latência.
 Feature: Implementação de um benchmark comparando canais síncronos e assíncronos em Go.
+Feature: Implementar um benchmark de latência comparando goroutines e processos leves.
